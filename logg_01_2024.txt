@@ -1,0 +1,165 @@
+****************************************************************'
+activity logg 
+Hans Stål
+Verbose notes on activities
+setup at 2024-09-22
+***************************************************************
+
+2024-09-20
+lab A1- intro
+connecting the base for STM32-board
+checking programload and debugging "hello world" intro
+writing a labb report
+running some tests and checking file system.
+
+2024-09-21
+Git/Git hub
+setting upp a new repository "STM32_2024" at gitub
+struggling with git bash to upload.
+didnot get it to work some problem with access rights
+took a break
+
+2024-09-22
+new trials but same result.....
+tried new approach
+GitHubDesktopSetup-x64 - desktop version
+and at once.. worked like charm. 
+There were a warning about discord; 
+temporary shut down discord.
+2024-09-26
+at 10.00 am
+problem runiing j-link
+no problem LED0,LED1
+STEPPING ON/OFF OK
+AT 17.00 
+J-LINK NO CONNECTION.
+CHECKING WIND  SET UPP UNITS:
+NO DRIVER FOR JLINK, download install;
+still no function..
+now late
+2024-09-27
+reconnecting all 'board connections'
+with somewhat thicker leads for better
+connections and soldered pins to leds 
+very tinny leads. Not the solution
+reinstall of all software..
+as j-link indicats no driver once again.
+2024-09-28
+driver check again. No driver!!
+download driver once again.
+checking driver is not 'signed'
+driver is not installed - safty precaution.
+disable windows defender.
+install driver problem over.
+asume the unsigned driver from Segger
+was the real issue, somewhat surprising..
+no hint.
+Starting programming of ports..
+using bitmaps and manual 32-bits not funny.
+led0 led1 on_off function fixed.
+buttons should be seensed by a interupt or
+'avbrott' but thinks that is not intended by
+the author of lab instruckttions. will fix by
+a read port rutin; problem is leds blinking and
+sensing puchbuttons without debouncing and bord
+with loose connections. will have to do anyhow.
+2024-09-29
+shall fix button setting of pullopp, pulldown
+and sensing eventually add 2 capacitors to avoid
+malfunction level 0. suggest 0.1 mf or 10 nf
+2024-09-27
+föreläsning kurs EP270V kth IoT
+internet of things; sista föreläsningen i denna kurs
+med nära anknytning till detta ämne SEL011.
+EP270 V vad använda mikrokontrollern till.
+kurs CH101V avslutatad 24.9 översiktligt om
+mikrokontroller medrisk_V arkitektur, 32-bitars
+mikrokontroller; assembler och principer;
+2024-10-04
+Uppkoppling för labb A3 lysdioder och knappar.
+trådarna till LED dioder för klena ->glappkontakter-likaså
+trycknapparna; Monterat och lött fast led på 0,64-stift
+hittat trycknappar med säkrare anslutning.
+planerat för resa Ume 7.10-8.10;
+påbörjat programmering lab A3; sedan senaste C programmering
+läst Java 4 terminer o python 1 termin; repetition C;
+Några särskilda egenheter etc.
+2024-10-05
+Fortsatt skapande av funktioner enl anvisninga.
+Svårt att få J-link att fungera först sporadiskt
+sedan totalt avbrott kollat drivrutiner glappkontakter mm
+lyckas inte få förbindelse mellan dator och kopplingen...
+Tar med problemet till Ume.
+2024-10-07
+På labbet i Ume. Det är något fel med installation på datorn T61 Lenovo.
+Anslutningen fungerar med annan dator. Hämtar ny dator. Nu fungerar överföringen
+utan problem. Ominstallation på T61 hjälper inte. 
+Segger IDE avinstallation inte utan anmärkning. ( det visade sig att vid hemkomst att alla USB-portar
+ blivit avinstallerade och fungerade inte
+längre i något avseeende);
+2024-10-08
+beslöt att färdigställa programmet lab A3 och kolla lite befintliga instrument.
+Jag har tektronix här mer agilent med modernare användarinterface. 
+gjorde klart programmet och subrutinerna för LED blinka trimmade in blinkfrekvens med
+vänteloopar utan timer funktion tills vidare.printbild från oschilloskop visar resultat.
+Men lyckas inte läsa av knapparna så det blir hemläxa misstänker bitmappfel i konfigurering efter
+dubbelkontroll av kopplingarna. Kommer kopplingsplattan att klara transporten?
+lyckades inte logga in på högskolans wi-Fi med rimlig hastighet.
+2024-10-09
+IoT kursen EP270V avslutningsseminarium med föreläsare från LME; nytt begrepp
+DT- digital tvilling; Nu mer tid för ST1011;
+2024-10-10
+Flyttar över verktyg mm till nyare datorn. 
+uppdaterar loggen.
+klarade ut problemet med T61, nu fungerar USB igen....
+troligt orsak till att knapparna inte går att avläsa; 
+PA-porten konfigurerad som output...
+måste Installer om Git på denna burk. 
+Men nu tycks IDE fungera ok..
+\scope_0.png
+2024-10-10
+led-blinkar- funktionerna fungerar och nu påbörjar jag avläsning av knappar.
+Har tänkt mig en elementär funktion med pollning synkroniserad med en fast
+blinkning med konstant till och fråntid, som åstadkommes med en nop-lopp med
+som skall illustrera den mycket snabba prosessorns cykeltid. Bland de förata svårigheterna me dessa komponenter. Att förstå
+konsekvenserna av de korta cykeltiderna. Nu visade det sig ganska snart att
+det var lättare sagt än gjort.Resten av dagens övningar gick ut på att 
+försöka få till input mode + pullupp och pull downn och läsa av ett stabilt
+värde som indikerar vilken knapp som var aktiverad. Avstudsning kan redan i
+sig vara besvärligt när man har full kontroll. Jag har en vindmätare med ett
+tungelement som skal ge exakt en slutning per varv, Även i byig vindriktnings-
+instabil vind och ev fastna i något läge.
+Nu visade det sig inte fungera alls, och mätningar av spänningar gav inga
+definitiva besked om orsaken. Grundåtgärd - läs manual igen, kolla på nätet mm
+Felsökning inte aktuell ännu. Manualen inte helt solklar. tex klockan enablas hur 
+var och när. det blir ny dag
+2024-10-11
+Pröva andra alternativ; kretsen felaktig begagnad av tidigare kursdeltagare?
+3,3v är inte mycket.provade med att använda annan port PA9 o PA10 anbefallt.
+och si efter några tester hittades en port som svarade på insignal. Då bytte
+jag kretsen till 'reserven' och då hittade jag till slut 2 portar som både
+svarade på stimuli och hade viss funktionalitet betr pull up och pulldown.
+men jag har fortfarande ett externt pulluppmotstånd på 10K för någonstans
+läcker ingången PA0till jord, så att nivån obelastad inte blir en etta utan
+motståndet.Men felet kan betraktas som pedagångiskt - man blir tvungen att
+läsa på...; Då har man en lösning på det akuta problemet-;
+Som att laga bilen med silvertape ungefär...
+Nu skall programmet struktureras om enligt specen och all felsökningskod
+elimineras.
+2024-10-12 lördag.
+Nu skall programmässiga och andra sladdstumpar fixas till så att kundens
+kravspec uppfylles. Den är inte allt för detaljerad; Vi har valt en LAb #3
+nivå typ robust, och den fingerfärdige kan nog märka att vald LED inte tänds
+alldeles omedelbart, men lyser alltid samma längd och att när båda aktiveras
+blinkar dom så att bara en är aktiverad i varje läge mm; Och nu skall efter
+datorbytet git aktiveras på den här datorn och dokumentationen ställas samman
+och koden kommenteras rudimentärt.
+En grundligare genomgång kan ev göras i zoom.
+hs
+2024-10-15
+Preparing for lab A4
+downloading and installation Bray Terminal;
+läsning DS10152
+planering av uppkoppling. PÅ kopplingsdäck #2.
+
+

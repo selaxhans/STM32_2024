@@ -161,5 +161,15 @@ Preparing for lab A4
 downloading and installation Bray Terminal;
 läsning DS10152
 planering av uppkoppling. PÅ kopplingsdäck #2.
+2024-10-15
+Test terminal.exe test av utsignal usb-kabel. inställningar. koll nivåå utsignal uppmätt till 3,44 volt.
+bifogade TEK0002.png och tek0003.png i färg te0004k.png  avseende bokstav G för gul led och R för röd LED.9600 baud 3,44V
+demo användning tektronix MSO2014 - 100MHz 4/16 kanaler; mätvärden visar amplitud + baudrate 1st bit vidd
+startbit + ev första biten 104 usek -> 9600baud +/-;
+läsning av manual och utformning av blankett för sammanställning av 32-bitars konfigurerings dubbelord.
+beslutat bygga påtidigare kopplingsdäck + nytt för anslutning till Uart RS232  TILL 4 VOLT ! utan cts, rts
+emottagen signal bekräftas med 'ack'
+MAL2600A.xlsx
+ är en blankett för att hantera 32 bitar bekvämt. 
 
 

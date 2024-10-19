@@ -171,5 +171,15 @@ beslutat bygga påtidigare kopplingsdäck + nytt för anslutning till Uart RS232
 emottagen signal bekräftas med 'ack'
 MAL2600A.xlsx
  är en blankett för att hantera 32 bitar bekvämt. 
-
-
+ 2024-10-17
+ börjat sammanställa alla configureringsinställningar
+ en första skiss till utvidgade mainfunktionen föt lab 4.
+ skapat en del dokumentation.
+2024-10-19
+Lab A4; monterat kopplingsdäckpå basplatta för stabilare, transportabel konstruktion.
+fixat några glappkontakter mm.
+editerat main.c för serieports hantering grundutförande 'main_a4.c använt blanketter mm för att sätta ihop 
+configurerings dubbelord; programmet kompileras ok; nu återstår 'bara' få det att fungera. Vid första försöket
+fås jlink avbrott när konfigureringen körs. något händer som kolliderar på något sätt. jobb för i morgon.
+Har preliminärt bokat mig för Analogkursen i vår; Vad är IA och OP07;
+Tagit några nya bilder som bifogas.

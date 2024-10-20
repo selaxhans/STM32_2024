@@ -183,3 +183,9 @@ configurerings dubbelord; programmet kompileras ok; nu återstår 'bara' få det
 fås jlink avbrott när konfigureringen körs. något händer som kolliderar på något sätt. jobb för i morgon.
 Har preliminärt bokat mig för Analogkursen i vår; Vad är IA och OP07;
 Tagit några nya bilder som bifogas.
+2024-10-20 (SÖNDAG)
+Arbetat med configurering av Usart; Metod #1 rita upp önskat resultat med blankett; skapa mha and or xor
+önskat resultat och skriv till register. kolla resultat me debugger + oschilloskop. Ta en funktion i taget.
+problem 1 - debuggern vill inte läsa resultated av registeruppdateringar; visar 'bara' lokala variabler..
+port konfig special tex txd clk portarna ser ut att flyta högimpediva. jag fattar manualen som output skall vara push_pull.
+mer koll i morgon.

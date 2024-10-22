@@ -5,7 +5,7 @@
 
 -------------------------- END-OF-HEADER -----------------------------
 
-File    : main.c
+File    : main.c   lab A4:102
 Purpose : Generic application start
 
 */
@@ -20,44 +20,49 @@ Purpose : Generic application start
 *
 *       main()
 *
-*  Function description
-*   Application entry point.
+*  Function description   lab A4:102A TX  WORKING
+*   Application entry point.+r0w 206 moda
 */
 
  void  main()
   {
+  int rev=0x102A;
+  int uart_init();
+ 
+ 
 /* initiering av portarför output LED gul + röd samt
 input från trycknappar; enl anvisningar skall aktiv hög resp låg användas blandat.
 pga fel i de två tillgängliga stm 32 chipen har andra portnummer för input använts.
 ett externtnt pullupp motstånd används föt PA10. inbyggd saknar funktion ?
 button märkt 0 aktiverar röd led button 1 gul. samtidig aktivering av båda->
 båda LED aktiverade omväxlande.
-Detta är LAB A2. knappar scannas ( ej avbrottshantering) och blinkningar genom 
+Detta är LAB A4. usart2 används för att manövrera lysdioder 
 vänteloopar */
-
-   RCC->IOPENR|=RCC_IOPENR_GPIOAEN;
-   //input
+ //clockdistribution enabel
+ //Enable peripheral clock GPIOA,GPIOB
+  RCC->APB1ENR |=RCC_APB1ENR_USART2EN;
+  RCC->IOPENR|=RCC_IOPENR_GPIOBEN;
+  RCC->IOPENR|=RCC_IOPENR_GPIOAEN;
+  // RCC_APB1ENR_USART2EN= 1;
+     //input switchar
+  /*
   GPIOA->MODER=(GPIOA->MODER&~(GPIO_MODER_MODE0))|(GPIO_MODER_MODE1_0);
   //input
   GPIOA->MODER=(GPIOA->MODER&~(GPIO_MODER_MODE10))|(GPIO_MODER_MODE10_0);
+  */
   //PA09 INPUT pull upp
   // GPIOA->PUPDR=(GPIOA->PUPDR|(GPIO_PUPDR_PUPD0_1));
    // printf("PULLUP.10.. %d!\n", GPIOA->PUPDR);
   //pa10 pull down
     GPIOA->PUPDR=(GPIOA->PUPDR|(GPIO_PUPDR_PUPD10_0));
     GPIOA->PUPDR=(GPIOA->PUPDR|(GPIO_PUPDR_PUPD1_1));
-//+++++++++++++++++++++++++;
-// printf("PULLUP 10+9... %d!\n", GPIOA->PUPDR);
 
-  //Enable peripheral clock GPIOA,GPIOB
-   RCC->IOPENR|=RCC_IOPENR_GPIOBEN;
-   RCC->IOPENR|=RCC_IOPENR_GPIOAEN;
     //General purpose output mode for LED, PB12 (pin25)
    GPIOB->MODER=(GPIOB->MODER&~(GPIO_MODER_MODE12))|(GPIO_MODER_MODE12_0);
    GPIOA->MODER=(GPIOA->MODER&~(GPIO_MODER_MODE8))|(GPIO_MODER_MODE8_0);
    GPIOA->BSRR=GPIO_BSRR_BS_8;
 
-
+  uart_init();
  
   void run();
 
@@ -73,70 +78,42 @@ void run()
 {
   int i;
   uint32_t status;
-  uint32_t switch_sense();
- //
- // loop checking buttons; 
- //
-  for (i=0; i < 10000000; i++)
+  void led0_onoff(int);
+  void led1_onoff(int);
+  USART2->CR1 = 0x0004603; 
+  status = USART2->ISR;
+  int uart_send_ack();
+  int uart_send_nack();
+  int uartrx();
+  int goon= 0x01;
+
+  while (goon==0x01)
   {
-  status = switch_sense(i);
+  if ((status & 0x00000020)!= 0); //RXNE =1 data aviabel
+  i = uartrx();
+  if (i== 0x01)
+  {
+  led0_onoff(0);
+  led1_onoff(1);
+  uart_send_ack();
   }
-return;
-}
-/* inpu sense varje blinkperiod*/
-uint32_t switch_sense(int i)
-{ 
-int wait(int sek);    // blinkfrekvens justering ej kalibrerad
-int lwait(int msek); // blinkfrekvens justering
-void led0_onoff();
-void led1_onoff();
-void led01_onoff();
-uint16_t resp;
-uint16_t resp1;
-uint16_t resp2;
-uint16_t response = GPIOA->IDR;
-uint16_t resp0=response&(0x01);
-
-//check both buttons
-
-resp2 = response & (0x0401);
-resp2=resp2^(0x0001);
-
-if (resp2 == 0x0401)
-{
- led01_onoff();
- GPIOA->BSRR=GPIO_BSRR_BS_8;
- return 0;
- }
-
-//check yellow button #1
-
-resp0 = resp0 ^ (0x01);
-if (resp0 !=0)
-{
- led0_onoff();
- return 0;
- }
- 
- //red led button #0
-
+   if (i== 0x00)
   {
-resp1 = (response & (0x0400));
-if (resp1 !=0)
-{
- resp1 = 1;
- led1_onoff();
- return 0;
- }
+  led0_onoff(1);
+  led1_onoff(0);
+  uart_send_ack();
+  }
+  else if ((i !=0x00)|(i !=0x01))
+  uart_send_nack();
+ } 
 }
- 
 
 
 
 
 // gul led cycle
-}
-void led0_onoff()
+
+void led0_onoff(int) //yellow led
 {
   int wait(int sek);
 //  int lwait(int msek1);
@@ -146,11 +123,10 @@ void led0_onoff()
   GPIOA->BSRR=GPIO_BSRR_BS_8;
   wait(1);
   return;
-
  }
 
 
-void led1_onoff()   //red led
+void led1_onoff(int)//red led 
 { 
   int wait(int sek);
   //int lwait(int msek1);
@@ -208,30 +184,109 @@ int lwait(int msek1)
 return 1;
   }
 
-int uart_init();
-int uartrx();
-int uarttx(int msg);
-int uart_send_string();
 
 
 int uart_init()
 {
+uint32_t obs;
+int uart_send_ack();
+int wait(int sek);
+void led0_onoff(int);
+void led1_onoff(int);
+int uart_send_ack();
+int uart_send_nack();
+int goon1 = 50;
 
+//RCC enabel
+RCC->APB1ENR |=RCC_APB1ENR_USART2EN;
+uint8_t indata;
+uint32_t obs1;
+uint32_t obs2;
+uint32_t obs3;
+uint32_t work_cr1 =0;
+uint32_t work_cr2;
+uint32_t work_cr3;
+uint32_t status=0;
 
+uint32_t modA =GPIOA->MODER;
+modA = (modA & 0xfffffc0f);
+modA = (modA ^ 0x2A0);
+GPIOA->MODER= modA;
+
+//uint32_t  pupdr = GPIOA->PUPDR;
+//GPIOA->MODER = (modA| 0xFFFFFFCFC);   //port  PA2 Alternatefunction
+//GPIOA->MODER = (GPIOA->MODER&~(GPIO_MODER_MODE0))|(GPIO_MODER_MODE1_0);
+GPIOA->AFR[0] = 0x00044400;//gpioa-<afrl
+obs =GPIOA->AFR[0];
+USART2->BRR = 0xd5;   //tesst1 9.600 16 oversampling
+USART2->CR1 = 0x0000460e;  //not enabled yet
+USART2->CR2 = 0x00100800;   //not enabled yet
+USART2->CR3 = 0x00000000;   //not enabled yet
+USART2->GTPR= 0x00000001;
+USART2->CR1 = 0x0000460f;   //not enabled yet
+status =USART2->ISR; // bit 5 RXNE data aviabel
+obs1 =USART2->CR1;
+obs2 =USART2->CR2;
+obs3= USART2->CR1;
+while (goon1)
+{
+goon1--;
+status =USART2->ISR; // bit 5 RXNE data aviabel
+if ((status&0x0000020) >0)
+{
+indata =USART2->RDR;
+ printf("indata %d!\n", indata);
+uart_send_ack();
+led1_onoff(1);
+}
+
+uart_send_ack();
+led0_onoff(1);
+uart_send_ack();
+led1_onoff(1);
+
+}
 return 0;
 }
+
+
 int uartrx()
 {
+uint8_t rxdata=0;
+int uart_send_ack();
+int uart_send_nack();
+
+rxdata =USART2->RDR;
+if  (rxdata == 0x47);
+uart_send_ack();
+return 0x47;
+if  (rxdata == 0x52);
+uart_send_ack();
+return 0x52;
+uart_send_nack();
+return 0x15;
+
+}
 
 
+
+
+
+int uart_send_ack()
+{
+int ack = 0x06;
+USART2->TDR =ack;
 return 0;
 }
 
-int uarttx(int msg)
+int uart_send_nack()
 {
-int ack = 0x06;
-int nack =0x15;
+int nack = 0x15;
+USART2->TDR=nack;
+return 0;
+
 }
+
 
 int uart_send_string()
 {

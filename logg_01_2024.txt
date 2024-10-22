@@ -189,3 +189,12 @@ Arbetat med configurering av Usart; Metod #1 rita upp önskat resultat med blank
 problem 1 - debuggern vill inte läsa resultated av registeruppdateringar; visar 'bara' lokala variabler..
 port konfig special tex txd clk portarna ser ut att flyta högimpediva. jag fattar manualen som output skall vara push_pull.
 mer koll i morgon.
+2024-10-21
+får inte rx eller tx att fungera; kollar bitmappar och alla inställningar; verktyget segger ide och terminalen nya verktyg;
+segger realtidsdata från debuggern verkar lite osäker i funktionen, när sker uppdatering, oschilloskopet känns säkrare. Finns signal osv.
+Ingen framgång idag, men en fungerande bas platta och programskelett.
+2024-10-22
+ytterligare ett register klockan till Usart...missad
+Nu går det att få ut utdata och klocka. bifogar kurvor.Lite besvärligt med fclk dvs baudrate settings. med valt värde på BRR fås bit-time se
+mätning oschilloskop 104 usek ca 9600 baud. Det verkar vara lite besvärligare med RX- data; mer koll i morgon. Samtidigt  lära känna IDE segger ochvilka hjälpmedel som finns och hur de hanterar projekt 
+ochalla beroenden.

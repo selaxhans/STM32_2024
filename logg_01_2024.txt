@@ -198,3 +198,52 @@ ytterligare ett register klockan till Usart...missad
 Nu går det att få ut utdata och klocka. bifogar kurvor.Lite besvärligt med fclk dvs baudrate settings. med valt värde på BRR fås bit-time se
 mätning oschilloskop 104 usek ca 9600 baud. Det verkar vara lite besvärligare med RX- data; mer koll i morgon. Samtidigt  lära känna IDE segger ochvilka hjälpmedel som finns och hur de hanterar projekt 
 ochalla beroenden.
+2024-10-23
+Arbetat med RX-data och seggerIDE; snyggat till koden lite skapat ett nytt projekt med enbart RX data för att testa lite olika
+mer eller mindre tänkbara fel i configureringar, hårdvara, signalkällor. Provat med Uart 1 i st för 2;
+samma resultat använt annan inport rx-data PA3 ersatt med PA15 och ändrat moder och anslutningar samma resultat
+dvs ingen indication på emottagen data, som kommer från terminalprogrammet och kollas med osch skopet i vad avser baudrarate obelastad polaritet
+start oc stopbitar, paritet till och från jämn och udda. körten omgång exakt från exempelsamling.
+ingen ljusning samma resultat; läst av alla felflaggor. Inte bytt kretsen. Samma resultat för både uart1 och
+2. TX fungerar hela tiden utan problem; läst manualen igen.. 
+2024-10-24
+Kontrollerat och läst configureringsbits och provat byta kretsen stm32l053 och konstaterar att kopplingsdäcket
+inte ger stabila kopplingar; inte portabel....; clockfrekvensen baudrate verkar särskilt instabil. bestämmer
+att morgondagen skall användas för mer exakt inställning av baudrate i konfigurering. Auto detect underlättas Inte
+av terminalprogrammet som i första hand levererar tecken koder. Jag menar att fel i baudrate antingen 
+leder till felmeddelande eller oläsbara tecken. Jag får ingen satt rxd finns flagga alls i något fall. Och data
+är alltid 0; Med indata till RX pinnen verifierad med skopet till polaritet och fart 9600 baud, möjligen
+omänd ordning bitordning, men det skall bara leda till fel tecken, sedan har jag kopplat bort felkällan 
+paritetsbit helt - en sak i sänder. Och sedan har jag testat både usart 2 och usart1 med samma resultat och
+då har annan port använts för input, vilket talar mod kretsfel. En iaktagelse har varit vid bytet att 
+starten kan ske med lite olika sysklockor.-> morgondagen. Tidigare erfarenher är 8251 intel, 16500 malfunction åtta
+bitars // data inputt output + separar clock generator 8254 tex, ungefär samma typ av konfigurering men man
+kunde mäta på varje delfunktion. stm 32 från pinne till shifregister osynligt.
+2024-10-25
+utreda baudrate inställningar. Utgångspunkten terminale, förutsättningarna 9.600 baud. 
+1. låsa till källan 16 MHZ inbyggd osc. 16 sampling mätt med oschilloskopet och provat ut
+BRR för närmast värde blev 0xD5 inte 0xD05; om nödvändigt måste en exaktare source frekves (PLL) väljas;
+lagt in en triggpuls vid detektorn av dataaviabel check och kört massor av data i ström. Ingen hit inte ens  
+av misstag. 
+Manualen-> finns ingen enkel metod att kolla fcyc. uppgift A5 antyder att toleranserna för baudrate kan
+vara mycket snäva. En PLL vald så att den är jämn multippel av 9.600. processordelen är kanske inte så
+noga.
+ 2024-10-27
+ Efter en förnyad kontroll av manual Uart och klockinställningar och konstaterande att Tx-från appen Labb 4 utan anmärkning, medan RX resulterar i arr dataready biten sätts på förväntat setting
+ problemet är barataregistret innehåller bara 0x0 utan undantag trots att data från datakällan, terminal appen enl anvisningar
+ och kontrollerat med TEk MSO2014, så tycker jag att nu är det dags att få det att fungera, varvid först konstaterats att 
+ inge felflagga är satt så måste nu baudrate synkroniseras med bättre precision. Autosett har jag avstått från har inte hittat något bekvämt sätt att
+ att fixa till de speciella startbit mönstren. Således har jag gjort följande: 
+ 1. skickat en ström 'R' satt upp mätning på skåpet se bilaga TEK00007_1.PNG . Och mäta tiden för de 9
+ bitarna startbit + 8 data + 0 paritet - se fig = 938,2 uS ->9.600 baud. Eftersom stm32 använder samma baudrate för
+ både rx-tx för samma UART1 ......UART6, Skall jag nu efteratt ha låst systemklockan till den interna rc -oschillatorn 16MHz
+ justera BRR dividern så att TX data får så nära RX baudrate som möjligt. Det var inte helt elimentärt att få fram Systemklockan för enkel beräkning
+ då startförhållanden som batterispänning,insvängning mm. så receptet blir att låsa och invänta insvängning. Och
+ nu så kör jag helt enkelt TX bokstaven 'R' och provar mig fram till minsta avvikelse mellan de två arbetssätten.
+ På så sätt kan jag utesluta att problemen med dataläsning in
+ e härrör från avvikelse i baudrate.
+ 2. således kör jag nu TX med enstaka tecken 'R' och mäter på motsvarande sätt resultatet efter 4 försök
+ här TEK00010_01.png. Sammantaget är det ju så att lära  sig hela verktygskedjan, med styrkor och svårigheter Tar
+ en stund.
+ Skjuter på kontroll av RX får anstå till imorgon. Kanske skulle installera words för redovisningen.
+ 
